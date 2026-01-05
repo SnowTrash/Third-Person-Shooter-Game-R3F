@@ -1,207 +1,350 @@
-# 🎮 Third-Person Shooter Controls
+# TPS-Controls
 
-A modern, web-based third-person shooter game built with **React Three Fiber**, **TypeScript**, and **Rapier Physics**. Experience smooth gameplay with advanced camera controls, realistic physics, and immersive 3D graphics - all running in your browser!
+A comprehensive, production-ready **third-person shooter controls** package for React Three Fiber applications. Built with React, Three.js, and Rapier Physics.
 
-![Demo](https://img.shields.io/badge/Demo-Live-brightgreen) ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white) ![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black) ![Three.js](https://img.shields.io/badge/Three.js-000000?logo=three.js&logoColor=white)
+[![npm version](https://badge.fury.io/js/tps-controls.svg)](https://www.npmjs.com/package/tps-controls)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## ✨ Features
+## Features
 
-- 🎯 **Smooth Third-Person Camera System** with intelligent collision detection
-- 🏃 **Realistic Movement Controls** - Walk, run, strafe, jump, and crouch
-- 🔫 **Dynamic Shooting System** with muzzle flash effects and recoil
-- 🎨 **Advanced Animation System** using FBX animations with smooth transitions
-- 🌍 **Physics-Based Gameplay** powered by Rapier physics engine
-- 📱 **Responsive Controls** supporting both keyboard and potential gamepad input
-- 🏗️ **Modular Architecture** with clean separation of concerns
+- **Physics-Based Movement** - Realistic movement powered by Rapier Physics
+- **Third-Person Camera** - Smart camera with collision detection and zoom (ADS)
+- **Animation System** - 9 blended animations (idle, walk, run, strafe, jump)
+- **Shooting Mechanics** - Raycasting with recoil and muzzle flash effects
+- **Positional Audio** - 3D sound effects for immersive gameplay
+- **Zero-Friction Setup** - Works out of the box with CDN-hosted assets
+- **Fully Customizable** - Modular architecture with extensive prop options
+- **TypeScript** - Full type safety and IntelliSense support
 
-## 🚀 Quick Start
-
-### Prerequisites
-
-- Node.js 16+ and pnpm (recommended) or npm/yarn
-- Modern web browser with WebGL support
+## Quick Start
 
 ### Installation
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Soham1803/third-person-shooter-controls.git
-   cd third-person-shooter-controls
-   ```
+```bash
+npm install tps-controls
+# or
+pnpm add tps-controls
+# or
+yarn add tps-controls
+```
 
-2. **Quick setup** (recommended)
-   ```bash
-   pnpm run setup
-   ```
-   
-   Or **install dependencies manually**:
-   ```bash
-   pnpm install
-   # or alternatively
-   npm install
-   # or
-   yarn install
-   ```
+### Peer Dependencies
 
-3. **Start the development server**
-   ```bash
-   pnpm run dev:watch    # Recommended: Auto-rebuilds package + demo
-   # or alternatively
-   pnpm run dev          # Just demo
-   # or
-   npm run dev
-   # or
-   yarn dev
-   ```
+This package requires the following dependencies in your project:
 
-4. **Open your browser** and navigate to `http://localhost:5173`
+```json
+{
+  "dependencies": {
+    "react": "^18.2.0",
+    "three": "^0.153.0",
+    "@react-three/fiber": "^8.14.0",
+    "@react-three/drei": "^9.92.0",
+    "@react-three/rapier": "^1.3.0"
+  }
+}
+```
 
-### Controls
+### Basic Usage
 
-| Key | Action |
-|-----|--------|
-| `W/A/S/D` | Move forward/left/backward/right |
-| `F` (hold) | Run |
-| `Space` | Jump |
+```tsx
+import { Canvas } from '@react-three/fiber'
+import { Physics, Debug } from '@react-three/rapier'
+import { Player } from 'tps-controls'
+import { Sky, Environment } from '@react-three/drei'
+
+function App() {
+  return (
+    <Canvas shadows camera={{ position: [0, 5, 10], fov: 75 }}>
+      <Physics debug={false} timeStep="vary">
+        <Player />
+        {/* Your game environment here */}
+      </Physics>
+      <Sky sunPosition={[100, 20, 100]} />
+      <Environment preset="city" />
+    </Canvas>
+  )
+}
+```
+
+## Controls
+
+| Input | Action |
+|-------|--------|
+| `WASD` / Arrow Keys | Movement |
 | `Mouse` | Look around |
-| `Right Click` (hold) | Zoom/Aim |
+| `Space` | Jump |
+| `Shift` | Run |
+| `Right Mouse` (Hold) | Aim / Zoom |
 | `Left Click` | Shoot |
 
-## 🏗️ Project Structure
+## API Reference
 
+### Player Props
+
+The `Player` component accepts the following props:
+
+```typescript
+interface PlayerProps {
+  // Asset Paths (optional - CDN defaults provided)
+  modelPath?: string
+  animationPaths?: {
+    idle?: string
+    walkForward?: string
+    walkBackward?: string
+    runForward?: string
+    runBackward?: string
+    strafeLeft?: string
+    strafeRight?: string
+    jumpStart?: string
+    jumpEnd?: string
+  }
+  audioPath?: string
+
+  // Physics Properties
+  colliderArgs?: [height: number, radius: number] // default: [0.5, 0.3]
+  mass?: number           // default: 5
+  restitution?: number    // default: 0.3 (bounciness)
+  friction?: number       // default: 0.5
+  linearDamping?: number  // default: 0.1
+  angularDamping?: number // default: 0.1
+
+  // Rendering Options
+  castShadow?: boolean    // default: false
+  receiveShadow?: boolean // default: false
+
+  // Standard React Three Fiber props
+  ...React.ComponentProps<'group'>
+}
 ```
-├── package/                    # 📦 NPM Package Source
-│   ├── src/
-│   │   ├── Player.tsx          # Main player component
-│   │   ├── index.ts            # Package entry point
-│   │   └── modules/player/     # Modular player systems
-│   │       ├── constants.ts    # Game configuration
-│   │       ├── types.ts        # TypeScript interfaces
-│   │       ├── camera.ts       # Camera positioning & collision
-│   │       ├── movement.ts     # Player movement logic
-│   │       ├── jump.ts         # Jump mechanics
-│   │       ├── shooting.ts     # Weapon system
-│   │       ├── recoil.ts       # Camera recoil effects
-│   │       ├── muzzleFlash.ts  # Visual effects
-│   │       ├── physics.ts      # Physics integration
-│   │       ├── textures.ts     # Texture utilities
-│   │       └── useAnimationSetup.ts # Animation management
-│   ├── dist/                   # Built package files
-│   ├── package.json            # Package configuration
-│   └── README.md               # Package documentation
-├── demo/                       # 🎮 Live Demo Application
-│   ├── src/
-│   │   ├── App.tsx             # Demo app component
-│   │   └── CustomPlayerExample.tsx # Usage examples
-│   ├── public/
-│   │   ├── models/             # 3D models (.glb)
-│   │   ├── animations/         # Animation files (.fbx)
-│   │   ├── sfx/                # Sound effects
-│   │   ├── vfx/                # Visual effect textures
-│   │   └── svgs/               # UI assets
-│   └── package.json            # Demo app configuration
-├── docs/                       # 📚 Documentation
-│   ├── getting-started.md      # Quick start guide
-│   └── asset-integration.md    # Asset customization guide
-├── package.json                # Workspace configuration
-├── pnpm-workspace.yaml         # pnpm workspace setup
-└── README.md                   # This file
+
+### Examples
+
+#### Custom Model and Animations
+
+```tsx
+<Player
+  modelPath="/models/my-character.glb"
+  animationPaths={{
+    idle: "/animations/idle.fbx",
+    walkForward: "/animations/walk.fbx",
+    runForward: "/animations/run.fbx",
+    jumpStart: "/animations/jump-start.fbx",
+    jumpEnd: "/animations/jump-end.fbx"
+  }}
+/>
 ```
 
-## 🤝 Contributing
+#### Physics Configuration
 
-We welcome contributions from developers of all skill levels! Whether you're fixing bugs, adding features, improving documentation, or sharing ideas, your contributions make this project better.
+```tsx
+<Player
+  colliderArgs={[0.6, 0.25]}  // Taller, narrower collider
+  mass={10}                    // Heavier character
+  friction={0.8}               // More grip
+  linearDamping={0.05}         // Less slide
+/>
+```
 
-### Ways to Contribute
+#### Enable Shadows
 
-- 🐛 **Bug Reports** - Found something broken? Let us know!
-- ✨ **Feature Requests** - Have ideas for cool new features?
-- 🔧 **Code Contributions** - Fix bugs or implement new features
-- 📚 **Documentation** - Help improve our docs
-- 🎨 **Assets** - Contribute 3D models, animations, or sound effects
-- 🧪 **Testing** - Help test the game on different devices/browsers
+```tsx
+<Player
+  castShadow={true}
+  receiveShadow={true}
+/>
+```
 
-### Getting Started
+## Module Structure
 
-1. **Fork** the repository
-2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
-3. **Make** your changes
-4. **Test** your changes thoroughly
-5. **Commit** your changes (`git commit -m 'Add amazing feature'`)
-6. **Push** to your branch (`git push origin feature/amazing-feature`)
-7. **Open** a Pull Request
+The package is built with a modular architecture. Each system can be imported separately:
 
-### Development Guidelines
+```tsx
+// Individual modules
+import { useCamera } from 'tps-controls/modules/player/camera'
+import { useMovement } from 'tps-controls/modules/player/movement'
+import { useShooting } from 'tps-controls/modules/player/shooting'
+import { useJump } from 'tps-controls/modules/player/jump'
+import { useRecoil } from 'tps-controls/modules/player/recoil'
+import { useMuzzleFlash } from 'tps-controls/modules/player/muzzleFlash'
+import { useAnimationSetup } from 'tps-controls/modules/player/useAnimationSetup'
+import { usePhysics } from 'tps-controls/modules/player/physics'
 
-- 📝 **Code Style**: We use ESLint and TypeScript for code quality
-- 🧪 **Testing**: Test your changes across different browsers
-- 📖 **Documentation**: Update documentation for new features
-- 🎯 **Performance**: Keep performance in mind, especially for real-time features
-- 🏗️ **Architecture**: Follow the existing modular structure
+// Utilities
+import { preloadAssets } from 'tps-controls/utils/preload'
+import { defaultAssetPaths } from 'tps-controls/modules/player/assetPaths'
+```
 
-### Code of Conduct
+## Customization
 
-We are committed to providing a welcoming and inclusive environment for all contributors. Please be respectful, constructive, and helpful in all interactions.
+### Movement Speed
 
-## 🛠️ Built With
+Edit the constants in your local copy or create a wrapper:
 
-- **[React Three Fiber](https://github.com/pmndrs/react-three-fiber)** - React renderer for Three.js
-- **[Three.js](https://threejs.org/)** - 3D graphics library
-- **[Rapier](https://rapier.rs/)** - Fast 2D and 3D physics engine
-- **[TypeScript](https://www.typescriptlang.org/)** - Type-safe JavaScript
-- **[Vite](https://vitejs.dev/)** - Fast build tool and dev server
-- **[React](https://reactjs.org/)** - UI library
+```tsx
+// Default: MOVE_SPEED = 2, RUN_MULTIPLIER = 2
+// You can modify these by forking the package or
+// adjusting the physics velocity in your own implementation
+```
 
-## 🎯 Roadmap
+### Camera Settings
 
-- [ ] 🎮 Gamepad/Controller support
-- [ ] 🎵 Enhanced audio system
-- [ ] ✨ Enhanced VFX - bullet trails, hit sparks, improved muzzle flash
-- [ ] 🔫 Additional weapon compatibility and variety
-- [ ] 🏆 Achievement system
-- [ ] 📱 Mobile controls
-- [ ] 🎨 More character models and animations
-- [ ] 🔧 Settings/options menu
+Camera behavior is controlled by:
+- `DEFAULT_CAMERA_FOV = 75` - Normal field of view
+- `ZOOM_CAMERA_FOV = 50` - Aim-down-sights FOV
+- Distance and collision rays in `camera.ts`
 
-## � Troubleshooting
+### Recoil and Shooting
 
-### Common Issues
+```tsx
+// RECOIL_STRENGTH = 0.1
+// RECOIL_DURATION = 150ms
+// MUZZLE_FLASH_DURATION = 50ms
+```
 
-**Installation Problems:**
+## Demo
+
+Run the demo to see TPS-Controls in action:
+
 ```bash
-# If you encounter lock file errors
-pnpm run reset
-
-# If packages seem outdated
-pnpm install --force
+git clone https://github.com/Soham1803/third-person-shooter-controls.git
+cd third-person-shooter-controls
+pnpm install
+pnpm run dev
 ```
 
-**Development Issues:**
+The demo includes:
+- Moving platforms
+- Swinging targets
+- Physics-based obstacles
+- Destructible objects
+- Distance markers
+
+## Asset Requirements
+
+### Default Assets (CDN-Hosted)
+
+The package includes default assets hosted on CDN:
+
+- **Model**: Character with rigged skeleton
+- **Animations**: 9 FBX animations (idle, walk, run, strafe, jump)
+- **Audio**: Pistol gunshot sound
+- **Textures**: Muzzle flash, bullet hole
+
+### Custom Asset Requirements
+
+If providing custom assets:
+
+#### 3D Model
+- Format: `.glb` (GLTF binary)
+- Must have a rigged skeleton with these bones:
+  - `mixamorigHips`
+  - `mixamorigSpine`
+  - `mixamorigSpine1`
+  - `mixamorigSpine2`
+  - `mixamorigNeck`
+  - `mixamorigHead`
+  - `mixamorigLeftShoulder`, `mixamorigLeftArm`, `mixamorigLeftForeArm`, `mixamorigLeftHand`
+  - `mixamorigRightShoulder`, `mixamorigRightArm`, `mixamorigRightForeArm`, `mixamorigRightHand`
+  - `mixamorigLeftUpLeg`, `mixamorigLeftLeg`, `mixamorigLeftFoot`
+  - `mixamorigRightUpLeg`, `mixamorigRightLeg`, `mixamorigRightFoot`
+
+#### Animations
+- Format: `.fbx` animations
+- Named animations: `Idle`, `WalkForward`, `RunForward`, etc.
+
+#### Audio
+- Format: `.mp3` or `.wav`
+- Recommended: Short, looped gunshot sound
+
+## Development
+
+### Project Structure
+
+```
+TPS-Controls/
+├── package/              # NPM package source
+│   ├── src/
+│   │   ├── Player.tsx   # Main Player component
+│   │   ├── index.ts     # Package exports
+│   │   └── modules/     # Modular systems
+│   └── dist/            # Built output
+├── demo/                # Demo application
+│   ├── src/
+│   │   ├── App.tsx
+│   │   └── Environment.tsx
+│   └── public/          # Assets
+└── scripts/             # Build utilities
+```
+
+### Building
+
 ```bash
-# If changes aren't reflected
+# Build the package
+pnpm --filter tps-controls run build
+
+# Watch mode for development
 pnpm run dev:watch
-
-# If build fails
-pnpm run build
 ```
 
-**For more detailed troubleshooting, see [CONTRIBUTING.md](CONTRIBUTING.md#troubleshooting)**
+## Technical Details
 
-## �📄 License
+### Physics Integration
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Uses **Rapier Physics** for:
+- Velocity-based movement
+- Ground detection via raycasting
+- Collision response with environment
+- Jump impulse application
+- Shooting hit detection with impulse
 
-## 🙏 Acknowledgments
+### Animation System
 
-- Thanks to all contributors who help make this project better
-- [Three.js community](https://discourse.threejs.org/) for excellent documentation and support
-- [React Three Fiber ecosystem](https://github.com/pmndrs) for amazing tools and examples
+Built on **Three.js AnimationMixer**:
+- Smooth blending between animations
+- Priority-based action transitions
+- Animation duration tracking
+- Jump animation synchronization
 
-## 📬 Contact
+### Camera System
 
-- **GitHub Issues**: For bug reports and feature requests
-- **Discussions**: For questions and community chat
+- Third-person follow camera
+- Multi-ray collision detection
+- Dynamic FOV adjustment (ADS)
+- Conservative clipping prevention
 
----
+## Troubleshooting
 
-**Ready to contribute?** Check out our [issues](../../issues) page for beginner-friendly tasks or propose your own ideas! 🚀
+### Player not visible
+- Check that your `<Physics>` component wraps the `<Player>`
+- Verify `modelPath` is correct or use CDN default
+- Check browser console for asset loading errors
+
+### Animations not playing
+- Ensure animation paths are correct
+- Check that model bones match expected names
+- Verify animations load in Network tab
+
+### Camera clipping through walls
+- Adjust collision ray distances in `camera.ts`
+- Ensure environment has colliders
+
+### Poor performance
+- Disable shadows: `castShadow={false}`
+- Reduce physics debug visualization
+- Optimize model geometry
+
+## License
+
+MIT © [Soham1803](https://github.com/Soham1803)
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Acknowledgments
+
+Built with:
+- [React Three Fiber](https://docs.pmnd.rs/react-three-fiber)
+- [React Three Rapier](https://pmndrs.github.io/react-three-rapier/)
+- [Drei](https://github.com/pmndrs/drei)
+- [Three.js](https://threejs.org/)
