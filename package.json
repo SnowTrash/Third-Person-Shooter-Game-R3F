@@ -1,0 +1,34 @@
+{
+  "name": "third-person-controls",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter demo dev",
+    "dev:watch": "concurrently \"pnpm --filter tps-controls dev\" \"pnpm --filter demo dev\"",
+    "build": "pnpm --filter tps-controls build",
+    "build:demo": "pnpm --filter demo build",
+    "build:github": "pnpm run build && pnpm --filter demo build:github",
+    "deploy:github": "pnpm run build:github && echo '✅ Demo built for GitHub Pages! Push to main branch to deploy.'",
+    "publish:package": "pnpm run build && pnpm --filter tps-controls publish",
+    "test": "pnpm --filter '*' test",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write .",
+    "setup": "pnpm install && pnpm run build && echo '✅ Project setup complete!'",
+    "clean:lockfiles": "rm -f package-lock.json yarn.lock .yarn.lock && echo '✅ Cleaned conflicting lock files. Run: pnpm install'",
+    "check:lockfiles": "node scripts/check-lockfiles.js",
+    "reset": "rm -rf node_modules demo/node_modules package/node_modules pnpm-lock.yaml && pnpm install && echo '✅ Project reset complete!'"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.25.0",
+    "concurrently": "^8.2.2",
+    "eslint": "^9.25.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^16.4.0",
+    "prettier": "^3.0.0",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.30.1",
+    "vite": "^6.3.5"
+  }
+}
