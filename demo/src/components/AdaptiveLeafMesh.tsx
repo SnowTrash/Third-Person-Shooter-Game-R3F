@@ -36,7 +36,7 @@ const AdaptiveLeafMesh = ({
   const previousZoneType = useRef<string>('');
   const showSporesRef = useRef(false);
 
-  // Botanical leaf shader material
+  // Botanical leaf shader material with enhanced visibility
   const leafMaterial = useMemo(() => {
     return new THREE.RawShaderMaterial({
       uniforms: {
@@ -44,8 +44,8 @@ const AdaptiveLeafMesh = ({
         uTime: { value: 0 },
         uMorphProgress: { value: 0 },
         uLightPos: { value: new THREE.Vector3(5, 10, 5) },
-        uVeinIntensity: { value: 0.3 },
-        uGlossiness: { value: 0.5 },
+        uVeinIntensity: { value: 0.5 },
+        uGlossiness: { value: 0.7 },
       },
       vertexShader: `
         precision highp float;
@@ -131,31 +131,31 @@ const AdaptiveLeafMesh = ({
           vec3 normal = normalize(vNormal);
           vec3 lightDir = normalize(uLightPos);
           
-          // Diffuse lighting
-          float diffuse = max(dot(normal, lightDir), 0.2);
+          // Enhanced diffuse lighting
+          float diffuse = max(dot(normal, lightDir), 0.3) + 0.5;
           
           // Vein patterns
           float veins = veinPattern(vUv) * uVeinIntensity;
           
           // Stomata (small pores)
-          float pores = stomata(vUv) * 0.2;
+          float pores = stomata(vUv) * 0.15;
           
-          // Base leaf color with vein detail
-          vec3 baseColor = uColor * (0.8 + veins + pores);
+          // Base leaf color with vein detail - enhanced brightness
+          vec3 baseColor = uColor * (1.0 + veins * 0.5 + pores);
           
           // Morphing transition glow
-          vec3 finalColor = baseColor * diffuse;
+          vec3 finalColor = baseColor * diffuse * 1.2;
           
           if (vMorphProgress > 0.0 && vMorphProgress < 1.0) {
             // Glow effect during transition
-            float glowIntensity = sin(vMorphProgress * 3.14159) * 0.3;
-            finalColor += vec3(0.2, 0.4, 0.6) * glowIntensity;
+            float glowIntensity = sin(vMorphProgress * 3.14159) * 0.4;
+            finalColor += vec3(0.3, 0.5, 0.7) * glowIntensity;
           }
           
-          // Opacity pulse during morphing
-          float alpha = 0.85;
+          // Opacity - always visible
+          float alpha = 0.9;
           if (vMorphProgress > 0.0 && vMorphProgress < 1.0) {
-            alpha = 0.7 + sin(vMorphProgress * 3.14159) * 0.15;
+            alpha = 0.85 + sin(vMorphProgress * 3.14159) * 0.1;
           }
           
           gl_FragColor = vec4(finalColor, alpha);

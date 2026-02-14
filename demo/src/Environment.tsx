@@ -3,9 +3,50 @@ import { Text } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { useRef, useState, useEffect } from 'react';
 import * as THREE from 'three';
+import ProceduralFlower from './components/ProceduralFlower';
+import TailPlant from './components/ProceduralTailPlant';
 import { useInfluenceZones } from './context/InfluenceZoneContext';
 import { InfluenceZoneVisualizer } from './components/InfluenceZoneVisualizer';
 import { PlayerPositionTracker } from './hooks/usePlayerPositionTracking';
+
+// Map zone type to plant type and color
+const zonePlantMap: Record<string, { plant: 'flower' | 'tail'; color: string }> = {
+  'ice': { plant: 'flower', color: '#A8D8EA' },
+  'jump_boost': { plant: 'flower', color: '#FFE066' },
+  'damage': { plant: 'tail', color: '#E85D75' },
+  'slow': { plant: 'tail', color: '#9B8B7D' },
+  'speed_boost': { plant: 'flower', color: '#7FD8BE' },
+};
+
+// Helper: render plants for each zone
+function ZonePlants({ zones }: { zones: any[] }) {
+  return (
+    <group>
+      {zones.map((zone, i) => {
+        const map = zonePlantMap[zone.type] || { plant: 'flower', color: '#7FD8BE' };
+        const pos = zone.position;
+        // Place several plants per zone in a circle
+        const count = 5;
+        const radius = Math.max(1, zone.radius * 0.7);
+        return Array.from({ length: count }).map((_, j) => {
+          const angle = (j / count) * Math.PI * 2;
+          const px = pos.x + Math.cos(angle) * radius;
+          const pz = pos.z + Math.sin(angle) * radius;
+          const py = pos.y;
+          if (map.plant === 'flower') {
+            return (
+              <ProceduralFlower key={zone.id + '-f' + j} seed={i * 10 + j} position={[px, py + 0.1, pz]} color={map.color} />
+            );
+          } else {
+            return (
+              <TailPlant key={zone.id + '-t' + j} segments={10} length={1.2} color={new THREE.Color(map.color)} position={[px, py + 0.1, pz]} />
+            );
+          }
+        });
+      })}
+    </group>
+  );
+}
 
 // Moving Platform Component with Player Carrying
 function MovingPlatform({ position, color = '#38a169' }: { position: [number, number, number], color?: string }) {
@@ -295,6 +336,9 @@ export function Environment() {
       {zones.map(zone => (
         <InfluenceZoneVisualizer key={zone.id} zone={zone} />
       ))}
+
+      {/* Render plants for each zone */}
+      <ZonePlants zones={zones} />
 
       {/* Ground */}
       <RigidBody position={[0, 0, 0]} type="fixed" colliders="cuboid">

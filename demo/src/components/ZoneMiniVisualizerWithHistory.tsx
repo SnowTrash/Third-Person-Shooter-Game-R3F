@@ -1,19 +1,20 @@
 import { Canvas } from '@react-three/fiber';
 import { useInfluenceZones, type ZoneType } from '../context/InfluenceZoneContext';
+import { useLeafMorphHistory } from '../context/LeafMorphHistoryContext';
+import { getLeafPropertiesFromZone } from '../systems/LeafGeometrySystem';
 import * as THREE from 'three';
-import { useMemo } from 'react';
-import MorphingOrganicMesh from './MorphingOrganicMesh';
+import { useRef, useMemo, useEffect } from 'react';
+import { AdaptiveLeafMesh } from './AdaptiveLeafMesh';
 import TailPlant from './ProceduralTailPlant';
 
-// Zone type to botanical color mapping (leaf pigmentation by adaptation)
+// Zone type to botanical color mapping
 const ZoneColors: Record<ZoneType, string> = {
-  'ice': '#A8D8EA',          // Cool blue - cold stress adaptation
-  'jump_boost': '#FFE066',   // Golden - altitude/sun adaptation
-  'damage': '#E85D75',       // Deep red - pressure stress response
-  'slow': '#9B8B7D',         // Warm brown - drought/waxy leaves
-  'speed_boost': '#7FD8BE',  // Vibrant green - optimal conditions
+  'ice': '#A8D8EA',
+  'jump_boost': '#FFE066',
+  'damage': '#E85D75',
+  'slow': '#9B8B7D',
+  'speed_boost': '#7FD8BE',
 };
-
 
 interface MiniVisualizerProps {
   size?: number;
@@ -22,6 +23,24 @@ interface MiniVisualizerProps {
 const MiniVisualizerCanvas: React.FC<MiniVisualizerProps> = ({ size = 200 }) => {
   const { playerZoneState } = useInfluenceZones();
   const { dominantZone } = playerZoneState;
+  const { recordZoneMorph } = useLeafMorphHistory();
+  const prevDominantZoneRef = useRef<string | null>(null);
+  const visitedZonesRef = useRef<Set<string>>(new Set());
+
+  // Track zone changes and record morph history
+  useEffect(() => {
+    if (!dominantZone) return;
+
+    const zoneId = dominantZone.id;
+    
+    // Record morph when entering a new zone
+    if (prevDominantZoneRef.current !== zoneId) {
+      const morphProps = getLeafPropertiesFromZone(dominantZone.type);
+      recordZoneMorph(zoneId, morphProps);
+      visitedZonesRef.current.add(zoneId);
+      prevDominantZoneRef.current = zoneId;
+    }
+  }, [dominantZone, recordZoneMorph]);
 
   const color = useMemo(() => {
     return new THREE.Color(
@@ -35,13 +54,21 @@ const MiniVisualizerCanvas: React.FC<MiniVisualizerProps> = ({ size = 200 }) => 
       : 'NO ZONE';
   }, [dominantZone]);
 
-  const zoneColor = useMemo(() => (dominantZone ? ZoneColors[dominantZone.type] : '#666666'), [dominantZone]);
+  const zoneColor = useMemo(
+    () => (dominantZone ? ZoneColors[dominantZone.type] : '#666666'),
+    [dominantZone]
+  );
 
   const showTailPlant = useMemo(() => {
     if (!dominantZone) return false;
-    // show tail plant for speed zones and slow (sinuous) zones
     return dominantZone.type === 'speed_boost' || dominantZone.type === 'slow';
   }, [dominantZone]);
+
+  // Get accumulated morph or use current zone morph
+  const currentZoneType = useMemo(
+    () => dominantZone?.type || 'default',
+    [dominantZone]
+  );
 
   return (
     <div
@@ -79,35 +106,33 @@ const MiniVisualizerCanvas: React.FC<MiniVisualizerProps> = ({ size = 200 }) => 
           borderRadius: '12px',
           zIndex: 2,
         }}
-        camera={{ position: [0, 0, 2.5], fov: 50 }}
+        camera={{ position: [0, 0, 3.2], fov: 45 }}
         gl={{
           alpha: true,
           antialias: true,
           powerPreference: 'high-performance',
         }}
       >
-        <ambientLight intensity={0.7} />
-        <directionalLight position={[5, 5, 5]} intensity={1.0} />
-        <pointLight position={[-3, -3, 3]} intensity={0.6} color={color} />
+        <ambientLight intensity={1.5} />
+        <directionalLight position={[8, 8, 8]} intensity={2.0} />
+        <directionalLight position={[-5, -5, -5]} intensity={0.8} />
+        <pointLight position={[3, 3, 3]} intensity={1.2} color={color} />
+        <pointLight position={[-3, -3, 3]} intensity={0.8} color="#fff" />
 
-        <MorphingOrganicMesh
-          // map simple zone types to organic shapes for variety
-          shape={
-            dominantZone
-              ? dominantZone.type === 'speed_boost'
-                ? 'blob'
-                : dominantZone.type === 'jump_boost'
-                ? 'spike'
-                : dominantZone.type === 'ice'
-                ? 'gaussian_invert'
-                : dominantZone.type === 'damage'
-                ? 'torus'
-                : 'smooth'
-              : 'smooth'
-          }
-          color={color}
-        />
-        {showTailPlant && <TailPlant segments={14} length={1.8} color={new THREE.Color(zoneColor)} />}
+        {/* 
+          Leaf morph that accumulates changes with CLAMP
+          Shows the current accumulated leaf state based on visited zones
+        */}
+        <AdaptiveLeafMesh zoneType={currentZoneType} color={color} />
+
+        {/* Optional tail plant for specific zones */}
+        {showTailPlant && (
+          <TailPlant
+            segments={14}
+            length={1.8}
+            color={new THREE.Color(zoneColor)}
+          />
+        )}
       </Canvas>
 
       {/* Leaf morphology info text */}
@@ -118,9 +143,7 @@ const MiniVisualizerCanvas: React.FC<MiniVisualizerProps> = ({ size = 200 }) => 
           left: '8px',
           right: '8px',
           fontSize: '9px',
-          color: dominantZone
-            ? ZoneColors[dominantZone.type]
-            : '#999',
+          color: dominantZone ? ZoneColors[dominantZone.type] : '#999',
           fontWeight: 'bold',
           textAlign: 'center',
           textTransform: 'uppercase',
@@ -131,7 +154,7 @@ const MiniVisualizerCanvas: React.FC<MiniVisualizerProps> = ({ size = 200 }) => 
       >
         <div>{zoneLabel}</div>
         <div style={{ fontSize: '7px', opacity: 0.8, marginTop: '2px' }}>
-          Morphing
+          {visitedZonesRef.current.size} zones visited
         </div>
       </div>
     </div>

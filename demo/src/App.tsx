@@ -5,8 +5,9 @@ import { Player } from "tps-controls"
 import { Physics } from '@react-three/rapier';
 import { Environment } from './Environment';
 import { InfluenceZoneProvider } from './context/InfluenceZoneContext';
+import { LeafMorphHistoryProvider } from './context/LeafMorphHistoryContext';
 import { ZoneUIFeedback } from './components/ZoneUIFeedback';
-import { ZoneMiniVisualizer } from './components/ZoneMiniVisualizerAdvanced';
+import { ZoneMiniVisualizer } from './components/ZoneMiniVisualizerWithHistory';
 import { PlayerProvider } from './context/PlayerContext';
 
 // Get the correct asset path for GitHub Pages deployment
@@ -20,10 +21,11 @@ function App() {
 
   return (
     <InfluenceZoneProvider>
-      <PlayerProvider rigidBodyRef={playerRigidBodyRef}>
-        <div>
-          <ZoneUIFeedback />
-          <ZoneMiniVisualizer size={200} />
+      <LeafMorphHistoryProvider>
+        <PlayerProvider rigidBodyRef={playerRigidBodyRef}>
+          <div>
+            <ZoneUIFeedback />
+            <ZoneMiniVisualizer size={200} />
         <span
           style={{
             position: 'absolute',
@@ -87,6 +89,7 @@ function App() {
     </KeyboardControls>
         </div>
       </PlayerProvider>
+    </LeafMorphHistoryProvider>
     </InfluenceZoneProvider>
   )
 }
