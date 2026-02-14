@@ -1,7 +1,11 @@
 import { RigidBody } from '@react-three/rapier';
 import { Text } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
+import * as THREE from 'three';
+import { useInfluenceZones } from './context/InfluenceZoneContext';
+import { InfluenceZoneVisualizer } from './components/InfluenceZoneVisualizer';
+import { PlayerPositionTracker } from './hooks/usePlayerPositionTracking';
 
 // Moving Platform Component with Player Carrying
 function MovingPlatform({ position, color = '#38a169' }: { position: [number, number, number], color?: string }) {
@@ -123,9 +127,119 @@ function SwingingTarget({ position }: { position: [number, number, number] }) {
   );
 }
 
+// Component to track player position and update zone state
+function PlayerZoneTracker() {
+  return <PlayerPositionTracker />;
+}
+
+// Component to initialize and manage influence zones
+function ZoneManager() {
+  const { addZone, zones } = useInfluenceZones();
+  const initialized = useRef(false);
+
+  useEffect(() => {
+    if (initialized.current) return;
+    initialized.current = true;
+
+    // Initialize zones
+    addZone({
+      id: 'ice_zone_1',
+      type: 'ice',
+      position: new THREE.Vector3(15, 1.5, 10),
+      radius: 4,
+      color: '#87CEEB',
+      intensity: 0.8,
+      description: 'Slippery ice zone',
+    });
+
+    addZone({
+      id: 'speed_boost_1',
+      type: 'speed_boost',
+      position: new THREE.Vector3(-12, 1.5, -8),
+      radius: 3.5,
+      color: '#00FF00',
+      intensity: 1.0,
+      description: 'Speed boost zone',
+    });
+
+    addZone({
+      id: 'jump_boost_1',
+      type: 'jump_boost',
+      position: new THREE.Vector3(0, 2, -30),
+      radius: 4,
+      color: '#FFD700',
+      intensity: 0.9,
+      description: 'Jump enhancement zone',
+    });
+
+    addZone({
+      id: 'damage_zone_1',
+      type: 'damage',
+      position: new THREE.Vector3(25, 1.5, -15),
+      radius: 5,
+      color: '#FF6B6B',
+      intensity: 0.7,
+      description: 'Hazardous zone',
+    });
+
+    addZone({
+      id: 'slow_zone_1',
+      type: 'slow',
+      position: new THREE.Vector3(-25, 1.5, -15),
+      radius: 4.5,
+      color: '#8B4513',
+      intensity: 0.8,
+      description: 'Sticky tar zone',
+    });
+
+    // Additional zones closer to spawn for easier testing
+    addZone({
+      id: 'speed_boost_test',
+      type: 'speed_boost',
+      position: new THREE.Vector3(5, 1.5, -3),
+      radius: 3,
+      color: '#00FF00',
+      intensity: 1.0,
+      description: 'Speed boost - testing zone',
+    });
+
+    addZone({
+      id: 'jump_boost_test',
+      type: 'jump_boost',
+      position: new THREE.Vector3(-5, 1.5, 5),
+      radius: 3,
+      color: '#FFD700',
+      intensity: 0.9,
+      description: 'Jump boost - testing zone',
+    });
+
+    addZone({
+      id: 'ice_zone_test',
+      type: 'ice',
+      position: new THREE.Vector3(0, 1.5, -8),
+      radius: 3,
+      color: '#87CEEB',
+      intensity: 0.8,
+      description: 'Ice zone - testing',
+    });
+  }, [addZone]);
+
+  return null;
+}
+
 export function Environment() {
+  const { zones } = useInfluenceZones();
+
   return (
     <>
+      <ZoneManager />
+      <PlayerZoneTracker />
+
+      {/* Render zone visualizers */}
+      {zones.map(zone => (
+        <InfluenceZoneVisualizer key={zone.id} zone={zone} />
+      ))}
+
       {/* Ground */}
       <RigidBody position={[0, 0, 0]} type="fixed" colliders="cuboid">
         <mesh rotation={[-Math.PI/2, 0, 0]} receiveShadow>

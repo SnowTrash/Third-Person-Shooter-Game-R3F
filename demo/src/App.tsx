@@ -4,6 +4,10 @@ import { Canvas } from "@react-three/fiber"
 import { Player } from "tps-controls"
 import { Physics } from '@react-three/rapier';
 import { Environment } from './Environment';
+import { InfluenceZoneProvider } from './context/InfluenceZoneContext';
+import { ZoneUIFeedback } from './components/ZoneUIFeedback';
+import { ZoneMiniVisualizer } from './components/ZoneMiniVisualizerAdvanced';
+import { PlayerProvider } from './context/PlayerContext';
 
 // Get the correct asset path for GitHub Pages deployment
 const getAssetPath = (path: string) => {
@@ -12,30 +16,35 @@ const getAssetPath = (path: string) => {
 }
 
 function App() {
+  const playerRigidBodyRef = React.useRef(null);
 
   return (
-    <div>
-      <span
-        style={{
-          position: 'absolute',
-          backgroundImage: `url('${getAssetPath('svgs/crosshair.svg')}')`,
-          width: '50px',
-          height: '50px',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          pointerEvents: 'none',
-          zIndex: 1000,
-          backgroundSize: 'contain',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center'
-        }}
-      />
+    <InfluenceZoneProvider>
+      <PlayerProvider rigidBodyRef={playerRigidBodyRef}>
+        <div>
+          <ZoneUIFeedback />
+          <ZoneMiniVisualizer size={200} />
+        <span
+          style={{
+            position: 'absolute',
+            backgroundImage: `url('${getAssetPath('svgs/crosshair.svg')}')`,
+            width: '50px',
+            height: '50px',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            pointerEvents: 'none',
+            zIndex: 1000,
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center'
+          }}
+        />
     <KeyboardControls 
         map={React.useMemo(() => [
             { name: 'forward', keys: ['ArrowUp', 'w'] },
             { name: 'backward', keys: ['ArrowDown', 's'] },
-            { name: 'run', keys: ['f'] },
+            { name: 'run', keys: ['Shift'] },
             { name: 'left', keys: ['ArrowLeft', 'a'] },
             { name: 'right', keys: ['ArrowRight', 'd'] },
             { name: 'jump', keys: ['Space'] },
@@ -76,7 +85,9 @@ function App() {
         </Physics>
       </Canvas>
     </KeyboardControls>
-    </div>
+        </div>
+      </PlayerProvider>
+    </InfluenceZoneProvider>
   )
 }
 
