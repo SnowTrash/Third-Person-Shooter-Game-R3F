@@ -52,27 +52,28 @@ const ProceduralFlower: React.FC<ProceduralFlowerProps> = ({
   // Create petal geometry (oval leaf-like shape instead of cylinder)
   const geo = useMemo(() => {
     const geometry = new THREE.BufferGeometry();
-    const petalWidth = 0.08;
+    const petalWidth = 0.04 + radius * 0.3;  // Scale with radius
     const petalHeight = height;
-    const segments = 12;
+    const segments = 16;
     
     const positions: number[] = [];
     const indices: number[] = [];
 
-    // Create oval petal shape
+    // Create oval petal shape that tapers to a point
     for (let i = 0; i <= segments; i++) {
       const v = i / segments;
       const y = -petalHeight / 2 + v * petalHeight;
       
-      // Oval width that tapers to a point at the tip
-      const width = Math.sin(v * Math.PI) * petalWidth;
+      // Oval width that tapers to a point at tip with smooth curve
+      const tapering = Math.sin(v * Math.PI);
+      const width = tapering * petalWidth;
       
       // Left side
       positions.push(-width, y, 0);
       // Right side
       positions.push(width, y, 0);
-      // Center (for smoothing)
-      positions.push(0, y, 0.005);
+      // Center (for vein effect)
+      positions.push(0, y, 0.005 * tapering);
     }
 
     // Create indices for triangle strip
@@ -95,7 +96,7 @@ const ProceduralFlower: React.FC<ProceduralFlowerProps> = ({
     geometry.computeVertexNormals();
     
     return geometry;
-  }, [height]);
+  }, [height, radius]);
 
   const mat = useMemo(() => new THREE.MeshStandardMaterial({
     side: THREE.DoubleSide,

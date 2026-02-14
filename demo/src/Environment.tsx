@@ -8,6 +8,7 @@ import TailPlant from './components/ProceduralTailPlant';
 import { useInfluenceZones } from './context/InfluenceZoneContext';
 import { InfluenceZoneVisualizer } from './components/InfluenceZoneVisualizer';
 import { PlayerPositionTracker } from './hooks/usePlayerPositionTracking';
+import { getLeafPropertiesFromZone } from './systems/LeafGeometrySystem';
 
 // Map zone type to plant type and color
 const zonePlantMap: Record<string, { plant: 'flower' | 'tail'; color: string }> = {
@@ -24,6 +25,7 @@ function ZonePlants({ zones }: { zones: any[] }) {
     <group>
       {zones.map((zone, i) => {
         const map = zonePlantMap[zone.type] || { plant: 'flower', color: '#7FD8BE' };
+        const leafProps = getLeafPropertiesFromZone(zone.type);
         const pos = zone.position;
         // Place several plants per zone in a circle
         const count = 5;
@@ -35,11 +37,25 @@ function ZonePlants({ zones }: { zones: any[] }) {
           const py = pos.y;
           if (map.plant === 'flower') {
             return (
-              <ProceduralFlower key={zone.id + '-f' + j} seed={i * 10 + j} position={[px, py + 0.1, pz]} color={map.color} />
+              <ProceduralFlower
+                key={zone.id + '-f' + j}
+                seed={i * 10 + j}
+                position={[px, py + 0.1, pz]}
+                color={map.color}
+                petals={Math.round(4 + leafProps.width * 8)}
+                radius={0.2 + leafProps.width * 0.15}
+                height={0.5 + leafProps.length * 0.5}
+              />
             );
           } else {
             return (
-              <TailPlant key={zone.id + '-t' + j} segments={10} length={1.2} color={new THREE.Color(map.color)} position={[px, py + 0.1, pz]} />
+              <TailPlant
+                key={zone.id + '-t' + j}
+                segments={Math.round(8 + leafProps.surface * 8)}
+                length={0.8 + leafProps.length * 0.8}
+                color={new THREE.Color(map.color)}
+                position={[px, py + 0.1, pz]}
+              />
             );
           }
         });

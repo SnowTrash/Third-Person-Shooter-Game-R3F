@@ -1,20 +1,37 @@
 import * as THREE from 'three';
 
 export interface LeafProperties {
-  width: number;        // 0 = narrow, 1 = broad
-  length: number;       // leaf length multiplier
-  pointiness: number;   // 0 = rounded, 1 = sharp points
-  surface: number;      // 0 = smooth, 1 = textured/bumpy
-  thickness: number;    // 3D thickness for 3D display
+  width: number;        // 0 = narrow, 1 = broad (clamped)
+  length: number;       // 0.5-1.5 = leaf length (clamped)
+  pointiness: number;   // 0 = rounded, 1 = sharp (clamped)
+  surface: number;      // 0 = smooth, 1 = bumpy (clamped)
+  thickness: number;    // 0 = thin, 1 = thick (clamped)
+}
+
+// CLAMP helper function
+const clamp = (value: number, min: number = 0, max: number = 1): number => {
+  return Math.max(min, Math.min(max, value));
+};
+
+// Clamp all leaf properties to valid ranges
+export function clampLeafProperties(props: LeafProperties): LeafProperties {
+  return {
+    width: clamp(props.width, 0, 1),
+    length: clamp(props.length, 0.5, 1.5),
+    pointiness: clamp(props.pointiness, 0, 1),
+    surface: clamp(props.surface, 0, 1),
+    thickness: clamp(props.thickness, 0, 1),
+  };
 }
 
 /**
- * Generates a botanical leaf geometry with customizable properties
+ * Generates a simple 2D botanical leaf geometry
+ * Creates a smooth oval leaf shape that morphs based on properties
  */
 export function generateLeafGeometry(
   properties: Partial<LeafProperties> = {}
 ): THREE.BufferGeometry {
-  const props: LeafProperties = {
+  const rawProps: LeafProperties = {
     width: 0.5,
     length: 1.0,
     pointiness: 0.5,
@@ -23,60 +40,64 @@ export function generateLeafGeometry(
     ...properties,
   };
 
+  // Clamp all values to valid ranges
+  const props = clampLeafProperties(rawProps);
+
   const geometry = new THREE.BufferGeometry();
-  const vertices: number[] = [];
+  const positions: number[] = [];
   const indices: number[] = [];
   const uvs: number[] = [];
 
-  // Create base leaf shape
-  const width = props.width;
-  const length = props.length;
-  const segments = 32;
-  const radiusSegments = 8;
+  const segments = 32;  // Smoothness of leaf outline
 
-  // Midrib (center vein)
+  // Create leaf shape: oval that tapers to pointed tip
   for (let i = 0; i < segments; i++) {
-    const t = i / (segments - 1);
-    const y = t * length * 2 - length;
+    const v = i / (segments - 1);  // 0 to 1 from base to tip
+    const y = -props.length / 2 + v * props.length;  // Vertical position
 
-    // Width varies along length (narrower at tip)
-    const tipNarrow = Math.pow(1 - Math.abs(t - 0.5) * 2, 1.5);
-    const currentWidth = width * tipNarrow;
+    // Oval width that tapers with pointiness
+    const tapering = Math.pow(Math.sin(v * Math.PI), 1 + props.pointiness);
+    const leafWidth = props.width * tapering * 0.3;
 
-    // Pointed tip if pointiness is high
-    const tipPoint = Math.pow(Math.abs(t - 0.5) * 2, props.pointiness + 1);
+    // Left side
+    positions.push(-leafWidth, y, 0);
+    uvs.push(0, v);
 
-    for (let j = 0; j < radiusSegments; j++) {
-      const angle = (j / radiusSegments) * Math.PI;
-      const x = Math.sin(angle) * currentWidth * (1 - tipPoint * 0.7);
-      const z = Math.cos(angle) * props.thickness * (1 - Math.abs(t - 0.5) * 0.5);
+    // Center/vein
+    positions.push(0, y, props.thickness * 0.05);
+    uvs.push(0.5, v);
 
-      vertices.push(x, y, z);
-      uvs.push(t, j / (radiusSegments - 1));
-    }
+    // Right side
+    positions.push(leafWidth, y, 0);
+    uvs.push(1, v);
   }
 
   // Create faces
   for (let i = 0; i < segments - 1; i++) {
-    for (let j = 0; j < radiusSegments - 1; j++) {
-      const a = i * radiusSegments + j;
-      const b = i * radiusSegments + j + 1;
-      const c = (i + 1) * radiusSegments + j;
-      const d = (i + 1) * radiusSegments + j + 1;
+    const step = 3;
+    const a = i * step;
+    const b = (i + 1) * step;
 
-      indices.push(a, c, b);
-      indices.push(b, c, d);
-    }
+    // Left side triangles
+    indices.push(a, b, a + 1);
+    indices.push(b, b + 1, a + 1);
+
+    // Right side triangles
+    indices.push(a + 1, b + 1, a + 2);
+    indices.push(b + 1, b + 2, a + 2);
   }
 
-  // Calculate normals
-  const positionAttribute = new THREE.BufferAttribute(
-    new Float32Array(vertices),
-    3
+  geometry.setAttribute(
+    'position',
+    new THREE.BufferAttribute(new Float32Array(positions), 3)
   );
-  geometry.setAttribute('position', positionAttribute);
-  geometry.setIndex(new THREE.BufferAttribute(new Uint32Array(indices), 1));
-  geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvs), 2));
+  geometry.setIndex(
+    new THREE.BufferAttribute(new Uint32Array(indices), 1)
+  );
+  geometry.setAttribute(
+    'uv',
+    new THREE.BufferAttribute(new Float32Array(uvs), 2)
+  );
   geometry.computeVertexNormals();
 
   return geometry;
@@ -84,6 +105,7 @@ export function generateLeafGeometry(
 
 /**
  * Maps environmental conditions to leaf properties
+ * All values are automatically clamped to valid ranges
  */
 export function getLeafPropertiesFromZone(zoneType: string): LeafProperties {
   const conditions: Record<string, LeafProperties> = {
@@ -129,17 +151,20 @@ export function getLeafPropertiesFromZone(zoneType: string): LeafProperties {
     },
   };
 
-  return conditions[zoneType] || {
+  const baseProps = conditions[zoneType] || {
     width: 0.5,
     length: 1.0,
     pointiness: 0.5,
     surface: 0.3,
     thickness: 0.1,
   };
+
+  // Always clamp to ensure valid ranges
+  return clampLeafProperties(baseProps);
 }
 
 /**
- * Interpolates between two leaf properties
+ * Interpolates between two leaf properties with CLAMP
  */
 export function morphLeafProperties(
   fromProps: LeafProperties,
@@ -148,7 +173,7 @@ export function morphLeafProperties(
 ): LeafProperties {
   const eased = THREE.MathUtils.smoothstep(progress, 0, 1);
 
-  return {
+  const morphed = {
     width: THREE.MathUtils.lerp(fromProps.width, toProps.width, eased),
     length: THREE.MathUtils.lerp(fromProps.length, toProps.length, eased),
     pointiness: THREE.MathUtils.lerp(
@@ -163,4 +188,7 @@ export function morphLeafProperties(
       eased
     ),
   };
+
+  // Always clamp morphed result
+  return clampLeafProperties(morphed);
 }

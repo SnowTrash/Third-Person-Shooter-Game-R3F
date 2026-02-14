@@ -36,13 +36,14 @@ const blendLeafProperties = (
   weightB: number = 0.5
 ): LeafProperties => {
   const w = clamp(weightB, 0, 1);
-  return {
-    width: clamp(a.width * (1 - w) + b.width * w),
-    length: clamp(a.length * (1 - w) + b.length * w),
-    pointiness: clamp(a.pointiness * (1 - w) + b.pointiness * w),
-    surface: clamp(a.surface * (1 - w) + b.surface * w),
-    thickness: clamp(a.thickness * (1 - w) + b.thickness * w),
+  const blended = {
+    width: clamp(a.width * (1 - w) + b.width * w, 0, 1),
+    length: clamp(a.length * (1 - w) + b.length * w, 0.5, 1.5),
+    pointiness: clamp(a.pointiness * (1 - w) + b.pointiness * w, 0, 1),
+    surface: clamp(a.surface * (1 - w) + b.surface * w, 0, 1),
+    thickness: clamp(a.thickness * (1 - w) + b.thickness * w, 0, 1),
   };
+  return blended;
 };
 
 export const LeafMorphHistoryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
