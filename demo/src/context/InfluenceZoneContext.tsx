@@ -3,6 +3,14 @@ import * as THREE from 'three';
 
 export type ZoneType = 'ice' | 'jump_boost' | 'damage' | 'slow' | 'speed_boost';
 
+export interface EnvironmentalConditions {
+  humidity: number;      // 0-1: low to high moisture
+  altitude: number;      // meters: sea level to mountain top
+  pressure: number;      // mb: atmospheric pressure
+  temperature: number;   // Celsius
+  toxicity: number;      // 0-1: environmental stress level
+}
+
 export interface InfluenceZone {
   id: string;
   type: ZoneType;
@@ -11,6 +19,7 @@ export interface InfluenceZone {
   color: string;
   intensity: number;
   description: string;
+  environment?: EnvironmentalConditions;  // Optional environmental parameters
 }
 
 export interface PlayerZoneState {

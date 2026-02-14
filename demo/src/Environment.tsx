@@ -141,7 +141,7 @@ function ZoneManager() {
     if (initialized.current) return;
     initialized.current = true;
 
-    // Initialize zones
+    // Initialize zones with environmental parameters
     addZone({
       id: 'ice_zone_1',
       type: 'ice',
@@ -149,7 +149,14 @@ function ZoneManager() {
       radius: 4,
       color: '#87CEEB',
       intensity: 0.8,
-      description: 'Slippery ice zone',
+      description: 'Cold alpine zone - compact leaves',
+      environment: {
+        humidity: 0.3,      // Low humidity (cold air doesn't hold water)
+        altitude: 3500,     // High altitude
+        pressure: 1000,     // Low pressure
+        temperature: -5,    // Freezing
+        toxicity: 0.2,
+      },
     });
 
     addZone({
@@ -159,7 +166,14 @@ function ZoneManager() {
       radius: 3.5,
       color: '#00FF00',
       intensity: 1.0,
-      description: 'Speed boost zone',
+      description: 'Tropical zone - broad leaves',
+      environment: {
+        humidity: 0.95,     // Very high humidity
+        altitude: 100,      // Low altitude
+        pressure: 1013,     // Sea level
+        temperature: 28,    // Warm tropical
+        toxicity: 0.0,      // No stress
+      },
     });
 
     addZone({
@@ -169,7 +183,14 @@ function ZoneManager() {
       radius: 4,
       color: '#FFD700',
       intensity: 0.9,
-      description: 'Jump enhancement zone',
+      description: 'Mountain peak - narrow leaves',
+      environment: {
+        humidity: 0.4,      // Moderate-low humidity
+        altitude: 4000,     // Very high altitude
+        pressure: 900,      // Very low pressure
+        temperature: -10,   // Cold
+        toxicity: 0.1,
+      },
     });
 
     addZone({
@@ -179,7 +200,14 @@ function ZoneManager() {
       radius: 5,
       color: '#FF6B6B',
       intensity: 0.7,
-      description: 'Hazardous zone',
+      description: 'High pressure zone - stunted growth',
+      environment: {
+        humidity: 0.5,
+        altitude: 200,
+        pressure: 1500,     // Very high pressure (crushing)
+        temperature: 15,
+        toxicity: 0.9,      // High toxicity/stress
+      },
     });
 
     addZone({
@@ -189,7 +217,14 @@ function ZoneManager() {
       radius: 4.5,
       color: '#8B4513',
       intensity: 0.8,
-      description: 'Sticky tar zone',
+      description: 'Desert zone - thick waxy leaves',
+      environment: {
+        humidity: 0.1,      // Extremely low humidity
+        altitude: 500,      // Mid altitude
+        pressure: 1010,     // Normal
+        temperature: 38,    // Hot
+        toxicity: 0.3,
+      },
     });
 
     // Additional zones closer to spawn for easier testing
@@ -201,6 +236,13 @@ function ZoneManager() {
       color: '#00FF00',
       intensity: 1.0,
       description: 'Speed boost - testing zone',
+      environment: {
+        humidity: 0.9,
+        altitude: 150,
+        pressure: 1012,
+        temperature: 25,
+        toxicity: 0.0,
+      },
     });
 
     addZone({
@@ -211,6 +253,13 @@ function ZoneManager() {
       color: '#FFD700',
       intensity: 0.9,
       description: 'Jump boost - testing zone',
+      environment: {
+        humidity: 0.3,
+        altitude: 3800,
+        pressure: 950,
+        temperature: -8,
+        toxicity: 0.1,
+      },
     });
 
     addZone({
@@ -221,6 +270,13 @@ function ZoneManager() {
       color: '#87CEEB',
       intensity: 0.8,
       description: 'Ice zone - testing',
+      environment: {
+        humidity: 0.35,
+        altitude: 3200,
+        pressure: 1005,
+        temperature: -3,
+        toxicity: 0.15,
+      },
     });
   }, [addZone]);
 
