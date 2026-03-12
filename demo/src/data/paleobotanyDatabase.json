@@ -1,0 +1,199 @@
+{
+  "paleobotanyEntries": [
+    {
+      "id": "olmos_base",
+      "phase": 0,
+      "title": "Olmos del Paleoceno - Formación Olmos",
+      "scientificName": "Ulmaceae sp. (Fossil)",
+      "timeago": "62 millones de años",
+      "content": "Los olmos del Paleoceno eran árboles dominantes en Norte América. La Formación Olmos (México, 62-60 Ma) preserva flora del Paleoceno temprano. Estas hojas primitivas carecen de lóbulos pronunciados y tienen márgenes simples. Son la base genética de futuras adaptaciones.",
+      "botanicalCharacteristics": [
+        "Márgenes lisos sin dientes",
+        "Sin lóbulos (margen entero)",
+        "Tamaño pequeño (base ancestral)",
+        "Ápice agudo pero simple"
+      ],
+      "environmentalContext": "Clima tropical sin estacionalidad marcada. Lluvia abundante todo el año. Poca presión selectiva para especializaciones defensivas.",
+      "unlockCondition": "automatic"
+    },
+    {
+      "id": "proto_q1_mechanics",
+      "phase": 1,
+      "title": "Proto-roble Temprano: Primeras Adaptaciones",
+      "scientificName": "Quercus protolignitum (teorético)",
+      "timeago": "55 millones de años",
+      "content": "En el Eoceno temprano (55 Ma), el clima comienza a estacionalizarse. Los ancestros tempranos de Quercus desarrollan sus primeros lóbulos adaptativos. Los lóbulos aumentan la superficie de evapotranspiración en estaciones secas y permiten comportamiento foliar más complejo. Esta es la divergencia clave del linaje Quercus.",
+      "botanicalCharacteristics": [
+        "Primeros lóbulos débiles (30% lobulación)",
+        "Emergencia de dientes minúsculos",
+        "Textura superficial aumentada",
+        "Ápice ligeramente emarginado"
+      ],
+      "environmentalContext": "Transición climática: estacionalidad emergente. Primeras presiones herbívoras. Competencia intraespecífica por luz en dosel.",
+      "unlockCondition": "time_milestone",
+      "requiredPhase": 1
+    },
+    {
+      "id": "middle_eocene_innovation",
+      "phase": 2,
+      "title": "Innovación Eoceno Medio: Defensas Dentadas",
+      "scientificName": "Quercus mediolignitum (teorético)",
+      "timeago": "48 millones de años",
+      "content": "El Eoceno medio (48 Ma) marca un aumento en herbívoros especializados (Perissodáctylos primitivos). Quercus responde con la evolución de dientes - pequeñas proyecciones en los márgenes que aumentan rigor mecánico y actúan como defensa alomónica. Los lóbulos más profundos mejoran redicción de luz en clima más seco.",
+      "botanicalCharacteristics": [
+        "Lóbulos pronunciados (50% lobulación)",
+        "Dientes marginales definidos",
+        "Nervios más prominentes (visible en fósiles)",
+        "Grosor aumentado (hoja más robusta)"
+      ],
+      "environmentalContext": "Oligoquistia climática: ciclos seco-húmedo anuales. Presión herbívora alta. Competencia intergénica intensificada.",
+      "unlockCondition": "puzzle_complete",
+      "requiredPhase": 2
+    },
+    {
+      "id": "late_eocene_speciation",
+      "phase": 3,
+      "title": "Especiación Eoceno Tardío: Éxito Diversificación",
+      "scientificName": "Quercus lignitum (cercano a especias modernas)",
+      "timeago": "42 millones de años",
+      "content": "El Eoceno tardío (42 Ma) es el punto de inflexión. Cambios climáticos globales (EECO declining, circulación oceánica reorganizada) crean nicho perfecto para Quercus: resistencia a sequía, defensa herbívora, flexibilidad ecológica. Especiación rápida genera la diversidad encontrada en el Oligoceno. Los lóbulos se profundizan aún más - característica distintiva del moderno Quercus.",
+      "botanicalCharacteristics": [
+        "Lobulación profunda (70%) - RASGO DISTINTIVO",
+        "Dientes compuestos emergentes (defensa fractal)",
+        "Regularity bien establecida",
+        "Ápice bifurcado en algunos especímenes"
+      ],
+      "environmentalContext": "Cambio Global Eoceno-Oligoceno. Adelgazamiento de ITCZ tropical. Contracción de bosques tropicales. Expansión de bosques templados. Era del hielo Antártico.",
+      "unlockCondition": "puzzle_complete",
+      "requiredPhase": 3
+    },
+    {
+      "id": "modern_quercus_victory",
+      "phase": 4,
+      "title": "Quercus Moderno: Éxito Evolutivo",
+      "scientificName": "Quercus L. (Fagaceae)",
+      "timeago": "0 millones de años (presente)",
+      "content": "Tras 50 millones de años de optimización gradual, Quercus se convierte en uno de los géneros más exitosos de plantas fotosintéticas. 400+ especies modernas ocupan hábitats desde semiaridez hasta subtropical. El patrón de hojas profundamente lobuladas (85% de lobulación) es la firma evolutiva del género. Cada característica - desde el tamaño hasta la forma del ápice - representa soluciones homeostáticas a presiones ambientales específicas.",
+      "botanicalCharacteristics": [
+        "Lobulación profunda (85%) - ADAPTACIÓN ÓPTIMA",
+        "Dientes minúsculos (8%) - Defensa herbívora vs. fotosíntesis",
+        "Superficie texturizada (45%) - Conducción de agua + defensa",
+        "Grosor robusto (20%) - Longevidad foliar"
+      ],
+      "environmentalContext": "Climates templados y subtropicales. Regímenes de humedad variables. Comunidades coevolucionadas con herbívoros especializados (weevils, lepidópteros). Relaciones mutualistas con hongos (micorrizas).",
+      "unlockCondition": "boss_defeated",
+      "requiredPhase": 4,
+      "achievements": [
+        "Desbloqueado: Codex completo",
+        "Desbloqueado: Form Quercus en escenario",
+        "Logro: Paleobotánico certificado"
+      ]
+    },
+    {
+      "id": "clamp_methodology",
+      "phase": 0,
+      "title": "[EXTRA] Metodología CLAMP en Paleobotánica",
+      "scientificName": "Wolfe, J.A. et al (2009)",
+      "timeago": "Metodología contemporánea",
+      "content": "El sistema CLAMP (Comparative LAf Architecture & Morphology Platform) es una herramienta científica moderna que cuantifica características foliares para inferir paleoambientes. Cada característica (lobulación, dientes, forma del ápice) correlaciona estadísticamente con variables climáticas (temperatura, precipitación, humedad). En este juego, usamos CLAMP para visualizar la evolución adaptativamente realista de Quercus.",
+      "botanicalCharacteristics": [
+        "13 características botánicas cuantificables",
+        "Escalas 0-1 (normalizadas)",
+        "Correlaciones climáticas validadas",
+        "Método usado en 300+ estudios paleoclimáticos"
+      ],
+      "environmentalContext": "Herramienta de investigación paleobotánica moderna. Desarrollada en década 1980-90. Permite inferencias multiparamétricas de paleoclimas.",
+      "unlockCondition": "automatic"
+    }
+  ],
+  "puzzleDefinitions": [
+    {
+      "id": "morphology_matching_1",
+      "name": "Emparejar Característica",
+      "description": "Conecta cada característica CLAMP con su adaptación ambiental",
+      "difficulty": "easy",
+      "phase": 1,
+      "pairs": [
+        {
+          "characteristic": "Lobulación aumentada",
+          "adaptation": "Regulación térmica en clima estacional",
+          "correctness": 0.95
+        },
+        {
+          "characteristic": "Dientes menores",
+          "adaptation": "Defensa limitada, fotosíntesis prioritaria",
+          "correctness": 0.9
+        },
+        {
+          "characteristic": "Superficie texturizada",
+          "adaptation": "Conducción de agua mejorada",
+          "correctness": 0.85
+        }
+      ]
+    },
+    {
+      "id": "temporal_sequence_2",
+      "name": "Ordenar Evolución Temporal",
+      "description": "Ordena los fósiles de MÁS antiguo a MÁS moderno",
+      "difficulty": "medium",
+      "phase": 2,
+      "sequence": [
+        "Olmos Paleoceno (62 Ma)",
+        "Proto-roble temprano (55 Ma)",
+        "Proto-roble medio (48 Ma)",
+        "Proto-Quercus (42 Ma)"
+      ]
+    },
+    {
+      "id": "botanical_identification_3",
+      "name": "Identificar Periodo del Fósil",
+      "description": "Se te muestra una hoja fósil. ¿A qué período pertenece?",
+      "difficulty": "hard",
+      "phase": 3,
+      "specimens": [
+        {
+          "description": "Hoja con lobulación profunda (70%), dientes irregulares, ápice bifurcado",
+          "answer": "Eoceno tardío (42 Ma) - Early speciation phase",
+          "botanicalContext": "Las características destructivas indican transición especiativa"
+        }
+      ]
+    }
+  ],
+  "environmentalConditionsMapping": {
+    "speed_boost": {
+      "temperature": "24-28°C",
+      "precipitation": "1000-1500 mm/año",
+      "seasonality": "baja",
+      "humidity": "alta",
+      "ecologicalContext": "Tropical lluvioso - Análogo Eoceno temprano"
+    },
+    "jump_boost": {
+      "temperature": "12-16°C",
+      "precipitation": "800-1200 mm/año",
+      "seasonality": "alta",
+      "humidity": "variable",
+      "ecologicalContext": "Montaña templada - Análogo Eoceno tardío"
+    },
+    "ice": {
+      "temperature": "0-8°C",
+      "precipitation": "600-900 mm/año",
+      "seasonality": "extrema",
+      "humidity": "baja relativa",
+      "ecologicalContext": "Boreal - Análogo post-Oligoceno"
+    },
+    "slow": {
+      "temperature": "18-22°C",
+      "precipitation": "300-600 mm/año",
+      "seasonality": "marcada",
+      "humidity": "baja",
+      "ecologicalContext": "Subtropical seco - Análogo Oligoceno"
+    },
+    "damage": {
+      "temperature": "variable",
+      "precipitation": "variable",
+      "seasonality": "extrema",
+      "humidity": "variable",
+      "ecologicalContext": "Estrés crítico - Análogo crisis climática"
+    }
+  }
+}

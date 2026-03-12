@@ -22,6 +22,14 @@ const DEFAULT_LEAF: LeafProperties = {
   pointiness: 0.5,
   surface: 0.3,
   thickness: 0.1,
+  lobed: 0,
+  teeth: 0,
+  teethRegularity: 0,
+  teethCloseness: 0,
+  teethRounded: 0.5,
+  teethAcute: 0.5,
+  teethCompound: 0,
+  apexEmarginate: 0,
 };
 
 // CLAMP helper: constrain values to [0, 1]
@@ -42,6 +50,14 @@ const blendLeafProperties = (
     pointiness: clamp(a.pointiness * (1 - w) + b.pointiness * w, 0, 1),
     surface: clamp(a.surface * (1 - w) + b.surface * w, 0, 1),
     thickness: clamp(a.thickness * (1 - w) + b.thickness * w, 0, 1),
+    lobed: clamp(a.lobed * (1 - w) + b.lobed * w, 0, 1),
+    teeth: clamp(a.teeth * (1 - w) + b.teeth * w, 0, 1),
+    teethRegularity: clamp(a.teethRegularity * (1 - w) + b.teethRegularity * w, 0, 1),
+    teethCloseness: clamp(a.teethCloseness * (1 - w) + b.teethCloseness * w, 0, 1),
+    teethRounded: clamp(a.teethRounded * (1 - w) + b.teethRounded * w, 0, 1),
+    teethAcute: clamp(a.teethAcute * (1 - w) + b.teethAcute * w, 0, 1),
+    teethCompound: clamp(a.teethCompound * (1 - w) + b.teethCompound * w, 0, 1),
+    apexEmarginate: clamp(a.apexEmarginate * (1 - w) + b.apexEmarginate * w, 0, 1),
   };
   return blended;
 };

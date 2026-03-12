@@ -5,6 +5,7 @@ import { useRef, useState, useEffect } from 'react';
 import * as THREE from 'three';
 import ProceduralFlower from './components/ProceduralFlower';
 import TailPlant from './components/ProceduralTailPlant';
+import { AdaptiveFlowerPlant } from './components/AdaptiveFlowerPlant';
 import { useInfluenceZones } from './context/InfluenceZoneContext';
 import { InfluenceZoneVisualizer } from './components/InfluenceZoneVisualizer';
 import { PlayerPositionTracker } from './hooks/usePlayerPositionTracking';
@@ -19,45 +20,40 @@ const zonePlantMap: Record<string, { plant: 'flower' | 'tail'; color: string }> 
   'speed_boost': { plant: 'flower', color: '#7FD8BE' },
 };
 
-// Helper: render plants for each zone
+/**
+ * ZonePlants: Renderiza plantas adaptativas que reflejan CLAMP properties
+ * 
+ * Ahora usa AdaptiveFlowerPlant para que los cambios del jugador sean visuales.
+ * Las plantas exageran cambios CLAMP (lobed, teeth, apex, etc) 2x para claridad.
+ */
 function ZonePlants({ zones }: { zones: any[] }) {
   return (
     <group>
       {zones.map((zone, i) => {
-        const map = zonePlantMap[zone.type] || { plant: 'flower', color: '#7FD8BE' };
         const leafProps = getLeafPropertiesFromZone(zone.type);
+        const map = zonePlantMap[zone.type] || { plant: 'flower', color: '#7FD8BE' };
         const pos = zone.position;
-        // Place several plants per zone in a circle
+        
+        // Distribuir 5 plantas en círculo alrededor de zona
         const count = 5;
         const radius = Math.max(1, zone.radius * 0.7);
+        const baseColor = new THREE.Color(map.color);
+        
         return Array.from({ length: count }).map((_, j) => {
           const angle = (j / count) * Math.PI * 2;
           const px = pos.x + Math.cos(angle) * radius;
           const pz = pos.z + Math.sin(angle) * radius;
-          const py = pos.y;
-          if (map.plant === 'flower') {
-            return (
-              <ProceduralFlower
-                key={zone.id + '-f' + j}
-                seed={i * 10 + j}
-                position={[px, py + 0.1, pz]}
-                color={map.color}
-                petals={Math.round(4 + leafProps.width * 8)}
-                radius={0.2 + leafProps.width * 0.15}
-                height={0.5 + leafProps.length * 0.5}
-              />
-            );
-          } else {
-            return (
-              <TailPlant
-                key={zone.id + '-t' + j}
-                segments={Math.round(8 + leafProps.surface * 8)}
-                length={0.8 + leafProps.length * 0.8}
-                color={new THREE.Color(map.color)}
-                position={[px, py + 0.1, pz]}
-              />
-            );
-          }
+          const py = pos.y + 0.1;
+          
+          return (
+            <AdaptiveFlowerPlant
+              key={zone.id + '-f' + j}
+              leafProps={leafProps}
+              position={[px, py, pz]}
+              color={baseColor}
+              exaggeration={2}
+            />
+          );
         });
       })}
     </group>

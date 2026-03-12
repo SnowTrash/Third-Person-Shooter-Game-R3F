@@ -6,8 +6,10 @@ import { Physics } from '@react-three/rapier';
 import { Environment } from './Environment';
 import { InfluenceZoneProvider } from './context/InfluenceZoneContext';
 import { LeafMorphHistoryProvider } from './context/LeafMorphHistoryContext';
+import { PaleobotanyEducationProvider } from './context/PaleobotanyEducationContext';
 import { ZoneUIFeedback } from './components/ZoneUIFeedback';
 import { ZoneMiniVisualizer } from './components/ZoneMiniVisualizerWithHistory';
+import CLAMPDebugHUDRefactored from './components/CLAMPDebugHUDRefactored';
 import { PlayerProvider } from './context/PlayerContext';
 
 // Get the correct asset path for GitHub Pages deployment
@@ -22,10 +24,12 @@ function App() {
   return (
     <InfluenceZoneProvider>
       <LeafMorphHistoryProvider>
-        <PlayerProvider rigidBodyRef={playerRigidBodyRef}>
-          <div>
-            <ZoneUIFeedback />
-            <ZoneMiniVisualizer size={200} />
+        <PaleobotanyEducationProvider>
+          <PlayerProvider rigidBodyRef={playerRigidBodyRef}>
+            <div>
+              <CLAMPDebugHUDRefactored />
+              <ZoneUIFeedback />
+              <ZoneMiniVisualizer size={200} />
         <span
           style={{
             position: 'absolute',
@@ -87,9 +91,10 @@ function App() {
         </Physics>
       </Canvas>
     </KeyboardControls>
-        </div>
-      </PlayerProvider>
-    </LeafMorphHistoryProvider>
+            </div>
+          </PlayerProvider>
+        </PaleobotanyEducationProvider>
+      </LeafMorphHistoryProvider>
     </InfluenceZoneProvider>
   )
 }
